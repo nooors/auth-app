@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-register",
@@ -8,16 +9,17 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup = this.fb.group({
-    name: ["", [Validators.required, Validators.minLength(2)]],
-    email: ["", [Validators.required, Validators.email]],
-    password: ["", [Validators.required, Validators.minLength(8)]],
+    name: ["Adolfo 1", [Validators.required, Validators.minLength(2)]],
+    email: ["adolfo1@adolfo.com", [Validators.required, Validators.email]],
+    password: ["123456", [Validators.required, Validators.minLength(6)]],
   });
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {}
 
   processRegister() {
     console.log(this.registerForm.value);
+    this.router.navigateByUrl("/dashboard");
   }
 }
