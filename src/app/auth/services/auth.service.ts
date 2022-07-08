@@ -27,6 +27,7 @@ export class AuthService {
       })
       .pipe(
         tap((resp) => {
+          localStorage.setItem('token', resp.token!)
           if (resp.ok) {
             this._user = {
               name: resp.name!,
@@ -37,5 +38,11 @@ export class AuthService {
         map((resp) => resp.ok),
         catchError((err) => of(err.error.msg)),
       );
+  }
+
+  tokenValidate() {
+
+    return this.httpSrv.get(`${this.url}/auth/renew`)
+
   }
 }
