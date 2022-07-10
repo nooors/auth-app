@@ -2,10 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import {
   FormBuilder,
   Validators,
-  FormControl,
   FormGroup,
 } from "@angular/forms";
 import { Router } from "@angular/router";
+
+// 3rd party library for cool error message effetcts
 import Swal from "sweetalert2";
 import { AuthService } from "../../services/auth.service";
 
@@ -34,7 +35,6 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     this.httSrv.login(email, password).subscribe((response) => {
-      console.log(response);
       if (response === true) {
         this.router.navigateByUrl("/dashboard");
       } else {

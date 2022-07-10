@@ -1,13 +1,13 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { catchError, map } from "rxjs/operators";
-import { Observable, of, tap } from "rxjs";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, map } from 'rxjs/operators';
+import { Observable, of, tap } from 'rxjs';
 
-import { environment } from "src/environments/environment";
-import { AuthResponse, User } from "../interfaces/auth.interface";
+import { environment } from 'src/environments/environment';
+import { AuthResponse, User } from '../interfaces/auth.interface';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AuthService {
   private url: string = environment.BASE_URL;
@@ -17,7 +17,18 @@ export class AuthService {
     return { ...this._user };
   }
 
-  constructor(private httpSrv: HttpClient) {}
+  constructor(private httpSrv: HttpClient) { }
+
+  register(name: string, email: string, password: string) {
+
+    return this.httpSrv.post<AuthResponse>(`${this.url}/auth/register`, { name, email, password })
+      .pipe(
+        map(response => response.ok),
+        catchError(err => of(err.error.msg)
+        )
+      )
+
+  }
 
   login(email: string, password: string) {
     return this.httpSrv
@@ -28,31 +39,38 @@ export class AuthService {
       .pipe(
         tap((resp) => {
           if (resp.ok) {
-            localStorage.setItem('token', resp.token!)
-            this._user = {
-              name: resp.name!,
-              uid: resp.uid!,
-            };
+            localStorage.setItem('token', resp.token!);
           }
         }),
         map((resp) => resp.ok),
-        catchError((err) => of(err.error.msg)),
+        catchError((err) => of(err.error.msg))
       );
   }
 
-  tokenValidate():Observable<boolean> {
 
-    const headers = new HttpHeaders()
-      .set('x-token', localStorage.getItem('token') || '');
+  tokenValidate(): Observable<boolean> {
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
 
-    return this.httpSrv.get<AuthResponse>(`${this.url}/auth/renew`, { headers })
+    return this.httpSrv
+      .get<AuthResponse>(`${this.url}/auth/renew`, { headers })
       .pipe(
-        map(resp => {
-
-          return resp.ok
+        map((resp) => {
+          localStorage.setItem('token', resp.token!);
+          this._user = {
+            name: resp.name!,
+            uid: resp.uid!,
+            email: resp.email!
+          };
+          return resp.ok;
         }),
-        catchError(err => of(false))
-      )
+        catchError((err) => of(false))
+      );
+  }
 
+  logout() {
+    localStorage.clear();
   }
 }

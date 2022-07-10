@@ -1,6 +1,11 @@
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+
+// 3rd party library for cool error message effetcts
+import Swal from "sweetalert2";
+
 
 @Component({
   selector: "app-register",
@@ -14,12 +19,23 @@ export class RegisterComponent implements OnInit {
     password: ["123456", [Validators.required, Validators.minLength(6)]],
   });
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router, private authSrv: AuthService) {}
 
   ngOnInit(): void {}
 
   processRegister() {
-    console.log(this.registerForm.value);
-    this.router.navigateByUrl("/dashboard");
+    // Destructuring registerForm.value
+    const { name, email, password } = this.registerForm.value;
+    this.authSrv.register(name, email, password).subscribe(res => {
+      console.log(res)
+      debugger
+      if (res === true) {
+        this.router.navigateByUrl("/dashboard");
+      } else {
+        Swal.fire('error', res, 'error')
+
+      }
+     });
+    // console.log(this.registerForm.value);
   }
 }
