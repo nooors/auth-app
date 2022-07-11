@@ -11,8 +11,8 @@ const routes: Routes = [
     path: "dashboard",
     loadChildren: () =>
       import("./protected/protected.module").then((m) => m.ProtectedModule),
-      canLoad: [TokenValidateGuard],
-      canActivate: [TokenValidateGuard]
+    canLoad: [TokenValidateGuard],
+    canActivate: [TokenValidateGuard],
   },
   {
     path: "**",
@@ -21,7 +21,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      // useHash: true,  ---> this is in case we don't have acces to server routes
+      useHash: false,
+    }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
