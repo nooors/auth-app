@@ -6,24 +6,16 @@ import { AuthService } from "src/app/auth/services/auth.service";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
-  styles: [
-    `
-      * {
-        margin: 1.5rem;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class DashboardComponent {
-
   // user!: User;
   get user() {
-    return this.authSrv.user
+    return this.authSrv.user;
   }
 
   constructor(private router: Router, private authSrv: AuthService) {
     // this.user = this.authSrv.user;
-
   }
 
   logout() {
